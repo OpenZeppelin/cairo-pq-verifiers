@@ -7,8 +7,8 @@
 This crate verifies the category-1, small-signature SLH-DSA parameter set. Verification
 reconstructs the FORS public key and seven-layer XMSS hypertree using the FIPS 205 SHA2
 instantiation. SHA-256 compression is provided by Starknet's native syscall.
-FIPS preimages are packed directly into 32-bit words, avoiding byte-by-byte decomposition
-before each compression call.
+FIPS preimages are packed directly into 32-bit words, and the invariant
+`PK.seed || zero padding` compression state is reused across the verification.
 
 The `PqSignatureVerifier` message hash is encoded as a 32-byte big-endian message and
 passed through the pure SLH-DSA interface with an empty context. Public keys contain two
@@ -22,8 +22,10 @@ References:
 
 | Measurement | L2 gas | Cairo steps |
 |---|---:|---:|
-| Bare verification | 3,627,901,336 | 9,035,854 |
-| Inside `__validate__` | 3,628,036,866 | 9,037,094 |
+| Bare verification | 1,803,067,376 | 4,271,878 |
+| Inside `__validate__` | 1,803,202,906 | 4,273,118 |
 
-The verifier exceeds the 100,000,000-L2-gas cap by 36.3× and the 1,000,000-step
-cap by 9.04×. The genuine fixture requires 4,116 SHA-256 block-processing syscalls.
+The verifier exceeds the 100,000,000-L2-gas cap by 18.0× and the 1,000,000-step
+cap by 4.27×. Reusing the public-seed prefix reduces the genuine fixture to 2,094
+SHA-256 block-processing syscalls; those syscalls account for 97.9% of its L2 gas and
+91.5% of its Cairo steps.

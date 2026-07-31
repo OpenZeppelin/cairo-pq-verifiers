@@ -12,6 +12,7 @@ pqbench_interface.workspace = true
 pqbench_ecdsa_stark = { path = "../ecdsa_stark" }
 pqbench_falcon_512 = { path = "../falcon_512" }
 pqbench_slh_dsa_sha2_128s = { path = "../slh_dsa_sha2_128s" }
+pqbench_slh_dsa_shake_128s = { path = "../slh_dsa_shake_128s" }
 
 [dev-dependencies]
 snforge_std.workspace = true

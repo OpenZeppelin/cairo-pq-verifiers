@@ -11,6 +11,7 @@ use openzeppelin_testing::declare_and_deploy;
 use openzeppelin_testing::signing::SerializedSigning;
 use pqbench_falcon_512::fixtures::{blake, poseidon, shake};
 use pqbench_slh_dsa_sha2_128s::fixtures as slh_dsa;
+use pqbench_slh_dsa_shake_128s::fixtures as slh_dsa_shake;
 use pqbench_targets::{IValidateBenchDispatcher, IValidateBenchDispatcherTrait};
 use snforge_std::{start_cheat_signature_global, start_cheat_transaction_hash_global};
 
@@ -42,6 +43,13 @@ fn falcon_poseidon_calldata() -> Array<felt252> {
 fn slh_dsa_calldata() -> Array<felt252> {
     let mut calldata = array![];
     slh_dsa::public_key().serialize(ref calldata);
+    calldata
+}
+
+/// The SLH-DSA-SHAKE account stores its two-felt `PK.seed || PK.root` public key.
+fn slh_dsa_shake_calldata() -> Array<felt252> {
+    let mut calldata = array![];
+    slh_dsa_shake::public_key().serialize(ref calldata);
     calldata
 }
 
@@ -197,6 +205,25 @@ fn bench_validate_slh_dsa_sha2_128s() {
     let address = declare_and_deploy("SlhDsaSha2_128sAccount", slh_dsa_calldata());
     start_cheat_transaction_hash_global(slh_dsa::message());
     start_cheat_signature_global(slh_dsa::signature().span());
+    let dispatcher = IValidateBenchDispatcher { contract_address: address };
+    let result = dispatcher.validate();
+    assert!(result == starknet::VALIDATED);
+}
+
+#[test]
+fn bench_validate_base_slh_dsa_shake_128s() {
+    let address = declare_and_deploy("SlhDsaShake128sAccount", slh_dsa_shake_calldata());
+    start_cheat_transaction_hash_global(slh_dsa_shake::message());
+    start_cheat_signature_global(slh_dsa_shake::signature().span());
+    let _dispatcher = IValidateBenchDispatcher { contract_address: address };
+    assert!(slh_dsa_shake::signature().len() == 491);
+}
+
+#[test]
+fn bench_validate_slh_dsa_shake_128s() {
+    let address = declare_and_deploy("SlhDsaShake128sAccount", slh_dsa_shake_calldata());
+    start_cheat_transaction_hash_global(slh_dsa_shake::message());
+    start_cheat_signature_global(slh_dsa_shake::signature().span());
     let dispatcher = IValidateBenchDispatcher { contract_address: address };
     let result = dispatcher.validate();
     assert!(result == starknet::VALIDATED);

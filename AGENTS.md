@@ -20,6 +20,8 @@ crates/
   falcon_512/           # verifier crate: Falcon-512 — BLAKE2s hint+direct, SHAKE-256 hint+direct, Poseidon
   ml_dsa_44/            # verifier crate: stub
   poseidon_wots/        # verifier crate: stub
+  slh_dsa_sha2_128s/    # verifier crate: FIPS 205 SHA2 category-1 small signature
+  slh_dsa_shake_128s/   # verifier crate: FIPS 205 SHAKE category-1 small signature
   ntt/                  # component crate: shared lazy-reduction NTT engine
   bench_targets/        # account harness: one account contract per verifier (validate scenario)
 scripts/
@@ -30,6 +32,8 @@ scripts/
   gen_ntt_tables.py     # proves the NTT engine model + emits its generated tables
   verify_ntt_constants.py  # re-derives the NTT root tables from first principles
   gen_falcon_fixture.py # generates the genuine Falcon fixtures (BLAKE2s + --variant shake|poseidon)
+  gen_slh_dsa_fixture.py # generates the genuine SLH-DSA-SHA2-128s fixture
+  gen_slh_dsa_shake_fixture.py # generates the genuine SLH-DSA-SHAKE-128s fixture
 schemes.json            # scheme registry: one entry per verifier variant
 efficiency_baseline.json  # the ratchet: pinned L2 gas + steps per benchmark pair
 results/                # generated snapshot (never hand-edited)
@@ -70,7 +74,7 @@ A change is complete only when everything it invalidates is regenerated in the s
 | Any measured Cairo code | `make all` (regenerates `results/`), `make check-eff`, and `make ratchet` if numbers improved |
 | Any number in `efficiency_baseline.json` | the efficiency tables in the main README and in the owning crate's README |
 | A verifier's cost or status | the README snapshot table |
-| A scheme's encoding (felt layout, sizes) | `schemes.json` sizes, the crate README, the owning fixture generator (`scripts/gen_falcon_fixture.py` or `scripts/gen_slh_dsa_fixture.py`), and regenerate the fixture |
+| A scheme's encoding (felt layout, sizes) | `schemes.json` sizes, the crate README, the owning fixture generator (`scripts/gen_falcon_fixture.py`, `scripts/gen_slh_dsa_fixture.py`, or `scripts/gen_slh_dsa_shake_fixture.py`), and regenerate the fixture |
 | The public surface of a measured crate | its benchmark pairs and `efficiency_baseline.json` entries (see below) |
 | NTT tables or the engine's arithmetic | `scripts/gen_ntt_tables.py` (model first, then `--emit`), `scripts/verify_ntt_constants.py` must still pass |
 | The toolchain (`.tool-versions`) | the README Run section, the `toolchain` field of `efficiency_baseline.json`, and a fresh `make all` |
@@ -82,7 +86,8 @@ Generated files are never hand-edited: `results/*`, `crates/ntt/src/roots_scaled
 `crates/ntt/src/roots_felt.cairo`, `crates/ntt/src/bitrev.cairo`,
 `crates/falcon_512/src/fixtures/blake.cairo`, `crates/falcon_512/src/fixtures/shake.cairo`,
 `crates/falcon_512/src/fixtures/poseidon.cairo`,
-`crates/slh_dsa_sha2_128s/src/fixtures.cairo`. Regenerate via the owning script.
+`crates/slh_dsa_sha2_128s/src/fixtures.cairo`,
+`crates/slh_dsa_shake_128s/src/fixtures.cairo`. Regenerate via the owning script.
 
 ## Performance: every public API is regression-checked
 

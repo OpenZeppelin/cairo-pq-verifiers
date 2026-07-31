@@ -81,6 +81,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "pqbench_slh_dsa_shake_128s"
+version = "0.1.0"
+dependencies = [
+ "pqbench_interface",
+ "snforge_std",
+]
+
+[[package]]
 name = "pqbench_targets"
 version = "0.1.0"
 dependencies = [
@@ -89,6 +97,7 @@ dependencies = [
  "pqbench_falcon_512",
  "pqbench_interface",
  "pqbench_slh_dsa_sha2_128s",
+ "pqbench_slh_dsa_shake_128s",
  "snforge_std",
 ]
 

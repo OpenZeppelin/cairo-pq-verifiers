@@ -128,15 +128,29 @@
       "package": "pqbench_slh_dsa_sha2_128s",
       "test": "bench_verify_slh_dsa_sha2_128s",
       "baseline": "bench_baseline_slh_dsa_sha2_128s",
-      "l2_gas": 3627901336,
-      "steps": 9035854
+      "l2_gas": 1803067376,
+      "steps": 4271878
     },
     "slh_dsa_sha2_128s_validate": {
       "package": "pqbench_targets",
       "test": "bench_validate_slh_dsa_sha2_128s",
       "baseline": "bench_validate_base_slh_dsa_sha2_128s",
-      "l2_gas": 3628036866,
-      "steps": 9037094
+      "l2_gas": 1803202906,
+      "steps": 4273118
+    },
+    "slh_dsa_shake_128s_verify": {
+      "package": "pqbench_slh_dsa_shake_128s",
+      "test": "bench_verify_slh_dsa_shake_128s",
+      "baseline": "bench_baseline_slh_dsa_shake_128s",
+      "l2_gas": 410340991,
+      "steps": 843750
+    },
+    "slh_dsa_shake_128s_validate": {
+      "package": "pqbench_targets",
+      "test": "bench_validate_slh_dsa_shake_128s",
+      "baseline": "bench_validate_base_slh_dsa_shake_128s",
+      "l2_gas": 410476521,
+      "steps": 844990
     }
   }
 }

@@ -3,7 +3,8 @@
 **Component:** the account harness for the in-`__validate__` scenario: one deployable
 account contract per verifier.
 **Status:** measured (ECDSA-STARK, the five Falcon-512 variants, and
-SLH-DSA-SHA2-128s); other PQ verifiers' accounts land as their schemes are implemented.
+the SHA2 and SHAKE SLH-DSA-128s variants); other PQ verifiers' accounts land as their
+schemes are implemented.
 
 Unlike the verifier crates (one scheme each), this crate collects **one account contract
 per verifier**, each in its own module. An account wraps its scheme the way a Starknet
@@ -23,14 +24,16 @@ src/
                      #   + Falcon512ShakeAccount (SHAKE-256) + Falcon512PoseidonAccount
                      #   + Falcon512ShakeDirectAccount (SHAKE-256 direct)
   slh_dsa_sha2_128s.cairo  # SlhDsaSha2_128sAccount (FIPS 205)
+  slh_dsa_shake_128s.cairo # SlhDsaShake128sAccount (FIPS 205)
 ```
 
 ## Current efficiency
 
 One row per verifier account. The 100M-L2-gas / 1M-step validation cap is the deployability
-threshold. Every Falcon account fits it. The standardized SLH-DSA account does not:
-reconstructing its FORS and XMSS trees requires 4,116 native SHA-256 block-processing
-syscalls and exceeds the limits by 36.3× in gas and 9.04× in steps.
+threshold. Every Falcon account fits it. The standardized SLH-DSA accounts do not:
+reconstructing their FORS and XMSS trees requires thousands of native hash syscalls. The
+SHAKE account fits the step cap after packing hashes into native Keccak lanes, but remains
+over the L2-gas cap.
 
 | Account | Measurement | L2 gas | Steps |
 |---|---|--:|--:|
@@ -40,4 +43,5 @@ syscalls and exceeds the limits by 36.3× in gas and 9.04× in steps.
 | `Falcon512PoseidonAccount` (Poseidon) | inside `__validate__` | 13,615,909 | 111,950 |
 | `Falcon512ShakeAccount` (SHAKE-256) | inside `__validate__` | 51,733,728 | 327,157 |
 | `Falcon512ShakeDirectAccount` (SHAKE-256 direct) | inside `__validate__` | 61,878,938 | 427,598 |
-| `SlhDsaSha2_128sAccount` (FIPS 205) | inside `__validate__` | 3,628,036,866 | 9,037,094 |
+| `SlhDsaSha2_128sAccount` (FIPS 205) | inside `__validate__` | 1,803,202,906 | 4,273,118 |
+| `SlhDsaShake128sAccount` (FIPS 205) | inside `__validate__` | 410,476,521 | 844,990 |

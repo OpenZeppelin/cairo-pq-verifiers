@@ -46,14 +46,16 @@ Current efficiency of every measured entry, per crate (the values pinned in
 | [`falcon_512`](crates/falcon_512) | verify, Poseidon variant (native) | 12,045,449 | 97,681 | 12.0% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 variant (standard) | 50,163,668 | 312,892 | 50.2% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 direct variant (standard) | 60,359,788 | 413,819 | 60.4% |
-| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | verify, FIPS 205 | 3,627,901,336 | 9,035,854 | 3,627.9% |
+| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | verify, FIPS 205 | 1,803,067,376 | 4,271,878 | 1,803.1% |
+| [`slh_dsa_shake_128s`](crates/slh_dsa_shake_128s) | verify, FIPS 205 | 410,340,991 | 843,750 | 410.3% |
 | [`bench_targets`](crates/bench_targets) | ECDSA-STARK account, inside `__validate__` | 160,795 | 1,437 | 0.16% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 hint account, inside `__validate__` | 14,380,100 | 119,124 | 14.4% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 direct account, inside `__validate__` | 24,525,310 | 219,565 | 24.5% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 Poseidon account, inside `__validate__` | 13,615,909 | 111,950 | 13.6% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 account, inside `__validate__` | 51,733,728 | 327,157 | 51.7% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 direct account, inside `__validate__` | 61,878,938 | 427,598 | 61.9% |
-| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHA2-128s account, inside `__validate__` | 3,628,036,866 | 9,037,094 | 3,628.0% |
+| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHA2-128s account, inside `__validate__` | 1,803,202,906 | 4,273,118 | 1,803.2% |
+| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHAKE-128s account, inside `__validate__` | 410,476,521 | 844,990 | 410.5% |
 | [`ntt`](crates/ntt) | forward 512-point transform | 8,895,740 | 81,826 | 8.9% |
 | [`ntt`](crates/ntt) | forward transform, unreduced output | 7,832,270 | 73,587 | 7.8% |
 | [`ntt`](crates/ntt) | generated Falcon-512 transform, felt input | 2,137,010 | 15,635 | 2.1% |
@@ -92,15 +94,22 @@ All five use genuine falcon.py-signed fixtures and fit the validation caps — t
 variants with wide margin, and the SHAKE-256 accounts at 51.7–61.9% of the gas cap and
 32.7–42.8% of the step cap.
 
-[`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) measures the standardized,
-stateless hash-based alternative at the same NIST category. Its smallest FIPS 205
-signature is 7,856 bytes, encoded as 491 16-byte felts, and its public key is 32 bytes.
-The verifier packs the FIPS preimages directly into SHA-256 words before using Starknet's
-native block syscall and accepts a genuine interoperable signature. The 4,116 compression
-calls needed to reconstruct FORS and the seven-layer hypertree still cost 3.63 billion L2
-gas and 9.04 million steps. Its account therefore exceeds the validation caps by 36.3× and
-9.04×, respectively, so this standard parameter set is not deployable inside `__validate__`
-on the measured protocol limits.
+The two SLH-DSA crates measure standardized, stateless hash-based alternatives at the same
+NIST category. Both use the smallest FIPS 205 signature: 7,856 bytes, encoded as 491
+16-byte felts, with a 32-byte public key. They accept genuine signatures from the
+interoperable slhdsa-c implementation and differ only in FIPS 205's hash instantiation:
+
+- [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) packs preimages into SHA-256 words and
+  reuses the invariant public-seed prefix state. Its 2,094 native compression calls
+  dominate the remaining 1.80 billion L2 gas and 4.27 million steps.
+- [`slh_dsa_shake_128s`](crates/slh_dsa_shake_128s) keeps preimages in native Keccak lanes
+  and applies explicit SHAKE256 padding around Starknet's Keccak syscall. It cuts the bare
+  cost to 410 million L2 gas and 843,750 steps—77.2% less gas and 80.3% fewer steps than
+  SHA2. The account fits the step cap at 84.5%, but is still 4.10× over the gas cap.
+
+Neither standard parameter set is therefore deployable inside `__validate__` under both
+measured protocol limits. For SHA2, 97.9% of gas is already the native syscall floor; even
+an idealized SHAKE signature with the minimum possible WOTS+ chains cannot meet the gas cap.
 
 All five derive the message point on-chain from `message_hash`, which binds the signature to
 the message. At s2morrow commit `4eff9ab`, its packed Poseidon verifier measures 81,212 steps
@@ -117,12 +126,13 @@ same interface.
 
 ## Try the accounts
 
-[`pq-accounts/`](pq-accounts) holds deployable SNIP-6 account contracts for every measured
-verifier, plus three ways to drive them: a CLI whose devnet quickstart declares, funds,
-deploys, and transacts in one command; an MCP server exposing the same operations to LLM
-clients; and a local wallet daemon that plugs the accounts into browser dapps (they appear
-in Voyager's connect-wallet dialog and sign contract calls with Falcon). The walkthrough
-is [`pq-accounts/USAGE.md`](pq-accounts/USAGE.md), including deploying to Sepolia.
+[`pq-accounts/`](pq-accounts) holds deployable SNIP-6 account contracts for the measured
+verifiers that fit validation, plus three ways to drive them: a CLI whose devnet quickstart
+declares, funds, deploys, and transacts in one command; an MCP server exposing the same
+operations to LLM clients; and a local wallet daemon that plugs the accounts into browser
+dapps (they appear in Voyager's connect-wallet dialog and sign contract calls with Falcon).
+The walkthrough is [`pq-accounts/USAGE.md`](pq-accounts/USAGE.md), including deploying to
+Sepolia.
 
 ## Report
 
@@ -159,6 +169,7 @@ and improvements are committed via `make ratchet`.
 | [`ecdsa_stark`](crates/ecdsa_stark) | ECDSA-STARK | classical EC (control) | none |
 | [`falcon_512`](crates/falcon_512) | Falcon-512 (FN-DSA); BLAKE2s hint+direct, SHAKE-256 hint+direct, Poseidon variants | lattice (NTRU) | draft, FIPS 206 (standard SHAKE-256; non-standard BLAKE2s / Poseidon) |
 | [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | SLH-DSA-SHA2-128s | hash-based (stateless) | final, FIPS 205 |
+| [`slh_dsa_shake_128s`](crates/slh_dsa_shake_128s) | SLH-DSA-SHAKE-128s | hash-based (stateless) | final, FIPS 205 |
 | [`ml_dsa_44`](crates/ml_dsa_44) | ML-DSA-44 (Dilithium) | lattice (module) | final, FIPS 204 |
 | [`poseidon_wots`](crates/poseidon_wots) | Poseidon-WOTS+ | hashing | not standardized |
 
@@ -181,6 +192,7 @@ crates/
   ecdsa_stark/       # one crate per scheme (see each crate's README)
   falcon_512/
   slh_dsa_sha2_128s/
+  slh_dsa_shake_128s/
   ml_dsa_44/
   poseidon_wots/
   ntt/               # generic NTT engine + generated Falcon-512 forward path

@@ -147,7 +147,26 @@
       "sig_felts": 491,
       "pubkey_felts": 2,
       "implemented": true,
-      "notes": "The smallest-signature category-1 SLH-DSA parameter set. A pure FIPS 205 signature with empty context is verified over the 32-byte big-endian transaction hash. Each 16-byte scheme element occupies one felt, preserving the native signature structure and enforcing canonical inputs."
+      "notes": "The smallest-signature category-1 SLH-DSA parameter set. A pure FIPS 205 signature with empty context is verified over the 32-byte big-endian transaction hash. Preimages stay in SHA-256 words and share the invariant PK.seed prefix state, but the native compression syscalls alone exceed both validation caps."
+    },
+    {
+      "key": "slh_dsa_shake_128s",
+      "label": "SLH-DSA-SHAKE-128s",
+      "family": "hash-based (stateless)",
+      "package": "pqbench_slh_dsa_shake_128s",
+      "verify_test": "bench_verify_slh_dsa_shake_128s",
+      "baseline_test": "bench_baseline_slh_dsa_shake_128s",
+      "validate_test": "bench_validate_slh_dsa_shake_128s",
+      "validate_baseline_test": "bench_validate_base_slh_dsa_shake_128s",
+      "contract": "SlhDsaShake128sAccount",
+      "nist_category": "1",
+      "standardized": "yes (FIPS 205)",
+      "on_chain_hash": "SHAKE-256 (native Keccak syscall with explicit SHAKE padding)",
+      "offchain_prep": "none beyond signing",
+      "sig_felts": 491,
+      "pubkey_felts": 2,
+      "implemented": true,
+      "notes": "The SHAKE counterpart to the smallest-signature category-1 SLH-DSA parameter set. Preimages remain in native Keccak lanes with the full 32-byte FIPS address and explicit SHAKE256 domain separation. The account fits the step cap but the native Keccak syscalls still exceed the gas cap."
     },
     {
       "key": "poseidon_wots",
