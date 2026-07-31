@@ -22,6 +22,7 @@ RESULTS = os.path.join(ROOT, "results", "results.json")
 FLAT_RE = re.compile(r'^\s*(\d+)\s+steps\s+\|\s*([\d.]+)%.*\|\s*"(.+)"\s*$')
 # Functions that are test-harness framing rather than the verifier itself.
 HARNESS = ("snforge", "SNFORGE_TEST_CODE", "cheatcode", "ResultSerde", "__snforge")
+MAX_PROFILE_STEPS = 5_000_000
 
 
 def clear_traces():
@@ -42,7 +43,7 @@ def trace_path(test):
 def profile_scheme(scheme):
     subprocess.run(
         ["snforge", "test", scheme["verify_test"], "--save-trace-data",
-         "--tracked-resource", "cairo-steps"],
+         "--tracked-resource", "cairo-steps", "--max-n-steps", "50000000"],
         cwd=ROOT, capture_output=True, text=True,
     )
     tp = trace_path(scheme["verify_test"])
@@ -77,6 +78,12 @@ def main():
     data = json.load(open(RESULTS))
     for s in data["schemes"]:
         if not s.get("measured"):
+            continue
+        if s.get("verify_steps", 0) > MAX_PROFILE_STEPS:
+            print(
+                f"Skipping {s['label']} profile: {s['verify_steps']:,} steps exceeds "
+                f"the {MAX_PROFILE_STEPS:,}-step trace budget"
+            )
             continue
         funcs = profile_scheme(s)
         if funcs is not None:

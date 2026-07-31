@@ -10,6 +10,8 @@
 
 pub mod ecdsa_stark;
 pub mod falcon_512;
+pub mod slh_dsa_sha2_128s;
+pub mod slh_dsa_shake_128s;
 
 /// Minimal account-validation surface every benchmark account exposes.
 #[starknet::interface]

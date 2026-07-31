@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2026-07-14 16:41",
+    "generated": "2026-07-31 12:36",
     "toolchain": {
       "scarb": "2.18.0",
       "snforge": "0.59.0",
@@ -905,6 +905,387 @@
       "implemented": false,
       "notes": "Finalized; robust signing. Expected SHAKE-dominated cost in Cairo.",
       "measured": false
+    },
+    {
+      "key": "slh_dsa_sha2_128s",
+      "label": "SLH-DSA-SHA2-128s",
+      "family": "hash-based (stateless)",
+      "package": "pqbench_slh_dsa_sha2_128s",
+      "verify_test": "bench_verify_slh_dsa_sha2_128s",
+      "baseline_test": "bench_baseline_slh_dsa_sha2_128s",
+      "validate_test": "bench_validate_slh_dsa_sha2_128s",
+      "validate_baseline_test": "bench_validate_base_slh_dsa_sha2_128s",
+      "contract": "SlhDsaSha2_128sAccount",
+      "nist_category": "1",
+      "standardized": "yes (FIPS 205)",
+      "on_chain_hash": "SHA-256 (native block-processing syscall)",
+      "offchain_prep": "none beyond signing",
+      "sig_felts": 491,
+      "pubkey_felts": 2,
+      "implemented": true,
+      "notes": "The smallest-signature category-1 SLH-DSA parameter set. A pure FIPS 205 signature with empty context is verified over the 32-byte big-endian transaction hash. Preimages stay in SHA-256 words and share the invariant PK.seed prefix state, but the native compression syscalls alone exceed both validation caps.",
+      "measured": true,
+      "verify_l2_gas": 1803067376,
+      "verify_steps": 4271878,
+      "verify_builtins": {
+        "bitwise": 2334812,
+        "range_check": 206707
+      },
+      "calldata_l2_gas": 2524160,
+      "pct_of_gas_cap": 1803.0674,
+      "pct_of_step_cap": 427.1878,
+      "fits_gas_cap": false,
+      "fits_step_cap": false,
+      "validate_l2_gas": 1803202906,
+      "validate_steps": 4273118,
+      "validate_pct_of_gas_cap": 1803.2029,
+      "validate_pct_of_step_cap": 427.3118,
+      "validate_fits": false,
+      "class_felts": 12325,
+      "class_bytes": 306688,
+      "verify_profile": [
+        {
+          "function": "Sha256ProcessBlock",
+          "flat_steps": 3909498,
+          "flat_pct": 91.49,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::wots_pk_from_sig[542-706]",
+          "flat_steps": 221886,
+          "flat_pct": 5.19,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::fors_pk_from_sig[735-1318]",
+          "flat_steps": 39336,
+          "flat_pct": 0.92,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::decode_signature[128-367]",
+          "flat_steps": 33406,
+          "flat_pct": 0.78,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::t_hash[328-449]",
+          "flat_steps": 21617,
+          "flat_pct": 0.51,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::wots_pk_from_sig[374-760]{NotSpecialized, NotSpecialized, NotSpecialized, NonZero(65536), NotSpecialized, NotSpecialized, NotSpecialized, }",
+          "flat_steps": 16054,
+          "flat_pct": 0.38,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::xmss_pk_from_sig[620-1149]",
+          "flat_steps": 14339,
+          "flat_pct": 0.34,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::wots_digits",
+          "flat_steps": 2919,
+          "flat_pct": 0.07,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::fors_pk_from_sig[421-1368]{NotSpecialized, NotSpecialized, NonZero(2), NotSpecialized, NotSpecialized, NotSpecialized, NonZero(65536), NotSpecialized, }",
+          "flat_steps": 2421,
+          "flat_pct": 0.06,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::finish_node_hash[189-255]",
+          "flat_steps": 2016,
+          "flat_pct": 0.05,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::finish_node_hash[360-499]",
+          "flat_steps": 1830,
+          "flat_pct": 0.04,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::address_words",
+          "flat_steps": 1185,
+          "flat_pct": 0.03,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::fixtures::signature",
+          "flat_steps": 986,
+          "flat_pct": 0.02,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::xmss_pk_from_sig",
+          "flat_steps": 644,
+          "flat_pct": 0.02,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::fors_indices[98-363]",
+          "flat_steps": 505,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::append_u32_bytes",
+          "flat_steps": 490,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::address_words{{ NotSpecialized, NotSpecialized, 2, 0, 0, 0 }, }",
+          "flat_steps": 476,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::hypertree_root[390-859]",
+          "flat_steps": 471,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::t_hash",
+          "flat_steps": 456,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::SlhDsaSha2_128sVerifier::verify",
+          "flat_steps": 369,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::finish_node_hash",
+          "flat_steps": 368,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::wots_pk_from_sig[374-760]{0, array![], NotSpecialized, NonZero(65536), NotSpecialized, NotSpecialized, NotSpecialized, }",
+          "flat_steps": 350,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::h_msg",
+          "flat_steps": 280,
+          "flat_pct": 0.01,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::fors_pk_from_sig[421-1368]{0, array![], NonZero(2), NotSpecialized, NotSpecialized, NotSpecialized, NonZero(65536), NotSpecialized, }",
+          "flat_steps": 161,
+          "flat_pct": 0.0,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_sha2_128s::read_be_u64[74-173]",
+          "flat_steps": 139,
+          "flat_pct": 0.0,
+          "harness": false
+        }
+      ]
+    },
+    {
+      "key": "slh_dsa_shake_128s",
+      "label": "SLH-DSA-SHAKE-128s",
+      "family": "hash-based (stateless)",
+      "package": "pqbench_slh_dsa_shake_128s",
+      "verify_test": "bench_verify_slh_dsa_shake_128s",
+      "baseline_test": "bench_baseline_slh_dsa_shake_128s",
+      "validate_test": "bench_validate_slh_dsa_shake_128s",
+      "validate_baseline_test": "bench_validate_base_slh_dsa_shake_128s",
+      "contract": "SlhDsaShake128sAccount",
+      "nist_category": "1",
+      "standardized": "yes (FIPS 205)",
+      "on_chain_hash": "SHAKE-256 (native Keccak syscall with explicit SHAKE padding)",
+      "offchain_prep": "none beyond signing",
+      "sig_felts": 491,
+      "pubkey_felts": 2,
+      "implemented": true,
+      "notes": "The SHAKE counterpart to the smallest-signature category-1 SLH-DSA parameter set. Preimages remain in native Keccak lanes with the full 32-byte FIPS address and explicit SHAKE256 domain separation. The account fits the step cap but the native Keccak syscalls still exceed the gas cap.",
+      "measured": true,
+      "verify_l2_gas": 410340991,
+      "verify_steps": 843750,
+      "verify_builtins": {
+        "keccak": 2099,
+        "bitwise": 14760,
+        "range_check": 149147
+      },
+      "calldata_l2_gas": 2524160,
+      "pct_of_gas_cap": 410.341,
+      "pct_of_step_cap": 84.375,
+      "fits_gas_cap": false,
+      "fits_step_cap": true,
+      "validate_l2_gas": 410476521,
+      "validate_steps": 844990,
+      "validate_pct_of_gas_cap": 410.4765,
+      "validate_pct_of_step_cap": 84.499,
+      "validate_fits": false,
+      "class_felts": 9708,
+      "class_bytes": 198648,
+      "verify_profile": [
+        {
+          "function": "Keccak",
+          "flat_steps": 206900,
+          "flat_pct": 44.8,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::wots_pk_from_sig[419-544]",
+          "flat_steps": 152276,
+          "flat_pct": 32.98,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::decode_signature[106-342]",
+          "flat_steps": 34402,
+          "flat_pct": 7.45,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::fors_pk_from_sig[537-1027]",
+          "flat_steps": 21488,
+          "flat_pct": 4.65,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::wots_pk_from_sig[290-598]",
+          "flat_steps": 12934,
+          "flat_pct": 2.8,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::xmss_pk_from_sig[460-890]",
+          "flat_steps": 8260,
+          "flat_pct": 1.79,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::append_wots_lane[100-472]",
+          "flat_steps": 5341,
+          "flat_pct": 1.16,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::t_hash[190-321]",
+          "flat_steps": 4515,
+          "flat_pct": 0.98,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::hash_prefix",
+          "flat_steps": 4094,
+          "flat_pct": 0.89,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::fors_pk_from_sig[287-1077]",
+          "flat_steps": 1808,
+          "flat_pct": 0.39,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::shake256[408-474]",
+          "flat_steps": 1576,
+          "flat_pct": 0.34,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::fors_pk_from_sig[537-1027]{NotSpecialized, 0, NotSpecialized, NotSpecialized, NotSpecialized, NotSpecialized, }",
+          "flat_steps": 1442,
+          "flat_pct": 0.31,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::fixtures::signature",
+          "flat_steps": 986,
+          "flat_pct": 0.21,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::wots_pk_from_sig",
+          "flat_steps": 861,
+          "flat_pct": 0.19,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::append_le_bytes[90-212]{NotSpecialized, NotSpecialized, NotSpecialized, @16, }",
+          "flat_steps": 641,
+          "flat_pct": 0.14,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::append_le_bytes[90-212]{NotSpecialized, NotSpecialized, NotSpecialized, @14, }",
+          "flat_steps": 559,
+          "flat_pct": 0.12,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::fors_indices[98-363]",
+          "flat_steps": 505,
+          "flat_pct": 0.11,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::hypertree_root[351-886]",
+          "flat_steps": 478,
+          "flat_pct": 0.1,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::xmss_pk_from_sig",
+          "flat_steps": 462,
+          "flat_pct": 0.1,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::shake256",
+          "flat_steps": 320,
+          "flat_pct": 0.07,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::append_wots_lane[100-472]{NotSpecialized, array![], 0, 0, }",
+          "flat_steps": 308,
+          "flat_pct": 0.07,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::wots_pk_from_sig[290-598]{0, NotSpecialized, NotSpecialized, array![], NotSpecialized, }",
+          "flat_steps": 294,
+          "flat_pct": 0.06,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::SlhDsaShake128sVerifier::verify",
+          "flat_steps": 293,
+          "flat_pct": 0.06,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::h_msg",
+          "flat_steps": 208,
+          "flat_pct": 0.05,
+          "harness": false
+        },
+        {
+          "function": "pqbench_slh_dsa_shake_128s::read_be_u64[74-173]",
+          "flat_steps": 139,
+          "flat_pct": 0.03,
+          "harness": false
+        }
+      ]
     },
     {
       "key": "poseidon_wots",

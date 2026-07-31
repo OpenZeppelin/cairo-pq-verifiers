@@ -21,7 +21,7 @@ report:
 	python3 scripts/gen_report.py
 
 test:
-	snforge test
+	snforge test --max-n-steps 50000000
 
 clean:
 	rm -rf target snfoundry_trace crates/*/snfoundry_trace

@@ -43,7 +43,10 @@ BUILTIN_RE = re.compile(r"Builtin\((\w+)\):\s*(\d+)")
 
 
 def run_snforge(extra_args):
-    cmd = ["snforge", "test", "bench_", "--detailed-resources"] + extra_args
+    cmd = [
+        "snforge", "test", "bench_", "--detailed-resources",
+        "--max-n-steps", "50000000",
+    ] + extra_args
     proc = subprocess.run(cmd, cwd=ROOT, capture_output=True, text=True)
     return proc.stdout + "\n" + proc.stderr
 
