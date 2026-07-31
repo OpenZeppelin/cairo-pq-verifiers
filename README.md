@@ -46,14 +46,14 @@ Current efficiency of every measured entry, per crate (the values pinned in
 | [`falcon_512`](crates/falcon_512) | verify, Poseidon variant (native) | 12,045,449 | 97,681 | 12.0% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 variant (standard) | 50,163,668 | 312,892 | 50.2% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 direct variant (standard) | 60,359,788 | 413,819 | 60.4% |
-| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | verify, FIPS 205 | 6,103,493,166 | 27,514,677 | 6,103.5% |
+| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | verify, FIPS 205 | 3,627,901,336 | 9,035,854 | 3,627.9% |
 | [`bench_targets`](crates/bench_targets) | ECDSA-STARK account, inside `__validate__` | 160,795 | 1,437 | 0.16% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 hint account, inside `__validate__` | 14,380,100 | 119,124 | 14.4% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 direct account, inside `__validate__` | 24,525,310 | 219,565 | 24.5% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 Poseidon account, inside `__validate__` | 13,615,909 | 111,950 | 13.6% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 account, inside `__validate__` | 51,733,728 | 327,157 | 51.7% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 direct account, inside `__validate__` | 61,878,938 | 427,598 | 61.9% |
-| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHA2-128s account, inside `__validate__` | 6,103,628,696 | 27,515,917 | 6,103.6% |
+| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHA2-128s account, inside `__validate__` | 3,628,036,866 | 9,037,094 | 3,628.0% |
 | [`ntt`](crates/ntt) | forward 512-point transform | 8,895,740 | 81,826 | 8.9% |
 | [`ntt`](crates/ntt) | forward transform, unreduced output | 7,832,270 | 73,587 | 7.8% |
 | [`ntt`](crates/ntt) | generated Falcon-512 transform, felt input | 2,137,010 | 15,635 | 2.1% |
@@ -95,11 +95,12 @@ variants with wide margin, and the SHAKE-256 accounts at 51.7–61.9% of the gas
 [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) measures the standardized,
 stateless hash-based alternative at the same NIST category. Its smallest FIPS 205
 signature is 7,856 bytes, encoded as 491 16-byte felts, and its public key is 32 bytes.
-The verifier uses Starknet's native SHA-256 block syscall and accepts a genuine
-interoperable signature, but the 4,116 compression calls needed to reconstruct FORS and
-the seven-layer hypertree cost 6.10 billion L2 gas and 27.5 million steps. Its account
-therefore exceeds the validation caps by 61.0× and 27.5×, respectively, so this standard
-parameter set is not deployable inside `__validate__` on the measured protocol limits.
+The verifier packs the FIPS preimages directly into SHA-256 words before using Starknet's
+native block syscall and accepts a genuine interoperable signature. The 4,116 compression
+calls needed to reconstruct FORS and the seven-layer hypertree still cost 3.63 billion L2
+gas and 9.04 million steps. Its account therefore exceeds the validation caps by 36.3× and
+9.04×, respectively, so this standard parameter set is not deployable inside `__validate__`
+on the measured protocol limits.
 
 All five derive the message point on-chain from `message_hash`, which binds the signature to
 the message. At s2morrow commit `4eff9ab`, its packed Poseidon verifier measures 81,212 steps

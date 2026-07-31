@@ -10,7 +10,7 @@
 //! canonical by requiring it to fit in `u128`.
 
 pub mod fixtures;
-use core::sha256::compute_sha256_byte_array;
+use core::sha256::compute_sha256_u32_array;
 use pqbench_interface::PqSignatureVerifier;
 
 /// Number of felts in a public key: `PK.seed || PK.root`, one 16-byte value per felt.
@@ -18,7 +18,6 @@ pub const PUBKEY_FELTS: u32 = 2;
 /// Number of felts in a signature: 7,856 bytes as 491 16-byte values.
 pub const SIG_FELTS: u32 = 491;
 
-const N: u32 = 16;
 const FORS_HEIGHT: u32 = 12;
 const FORS_TREES: u32 = 14;
 const FORS_TREE_SIZE: u32 = 4096;
@@ -61,25 +60,31 @@ fn set_type_and_clear(ref address: Address, address_type: u8) {
     address.hash_or_index = 0;
 }
 
-fn append_address(ref data: ByteArray, address: Address) {
-    data.append_word(address.layer.into(), 1);
-    data.append_word(address.tree.into(), 8);
-    data.append_word(address.address_type.into(), 1);
-    data.append_word(address.key_pair.into(), 4);
-    data.append_word(address.chain_or_height.into(), 4);
-    data.append_word(address.hash_or_index.into(), 4);
+fn split_u128(value: u128) -> [u32; 4] {
+    [
+        (value / 0x1000000000000000000000000).try_into().unwrap(),
+        ((value / 0x10000000000000000) % 0x100000000).try_into().unwrap(),
+        ((value / 0x100000000) % 0x100000000).try_into().unwrap(),
+        (value % 0x100000000).try_into().unwrap(),
+    ]
 }
 
-fn append_digest(ref data: ByteArray, digest: [u32; 8]) {
-    let [d0, d1, d2, d3, d4, d5, d6, d7] = digest;
-    data.append_word(d0.into(), 4);
-    data.append_word(d1.into(), 4);
-    data.append_word(d2.into(), 4);
-    data.append_word(d3.into(), 4);
-    data.append_word(d4.into(), 4);
-    data.append_word(d5.into(), 4);
-    data.append_word(d6.into(), 4);
-    data.append_word(d7.into(), 4);
+fn append_aligned_u128(ref input: Array<u32>, value: u128) {
+    let [w0, w1, w2, w3] = split_u128(value);
+    input.append(w0);
+    input.append(w1);
+    input.append(w2);
+    input.append(w3);
+}
+
+/// Appends a 16-byte value after the two pending bytes in `carry`.
+fn append_shifted_u128(ref input: Array<u32>, ref carry: u32, value: u128) {
+    let [w0, w1, w2, w3] = split_u128(value);
+    input.append(carry * 0x10000 + w0 / 0x10000);
+    input.append((w0 % 0x10000) * 0x10000 + w1 / 0x10000);
+    input.append((w1 % 0x10000) * 0x10000 + w2 / 0x10000);
+    input.append((w2 % 0x10000) * 0x10000 + w3 / 0x10000);
+    carry = w3 % 0x10000;
 }
 
 fn digest_node(digest: [u32; 8]) -> u128 {
@@ -113,56 +118,86 @@ fn digest_bytes_30(digest: [u32; 8]) -> Array<u8> {
     out
 }
 
-fn hash_prefix(pk_seed: u128, address: Address) -> ByteArray {
-    let mut data: ByteArray = "";
-    data.append_word(pk_seed.into(), N);
-    data.append_word(0, 31);
-    data.append_word(0, 17);
-    append_address(ref data, address);
-    data
+/// Packs `PK.seed || zero padding || ADRSc` directly into SHA-256 words.
+///
+/// The compressed address is 22 bytes, so its low two bytes remain in `carry` for the
+/// first message element. Avoiding `ByteArray` here removes byte decomposition from every
+/// node hash while preserving the exact FIPS 205 preimage.
+fn hash_prefix(pk_seed: [u32; 4], address: Address) -> (Array<u32>, u32) {
+    let [s0, s1, s2, s3] = pk_seed;
+    let layer: u64 = address.layer.into();
+    let address_type: u64 = address.address_type.into();
+    let key_pair: u64 = address.key_pair.into();
+    let chain_or_height: u64 = address.chain_or_height.into();
+    let hash_or_index: u64 = address.hash_or_index.into();
+    let a0: u32 = (layer * 0x1000000 + address.tree / 0x10000000000).try_into().unwrap();
+    let a1: u32 = ((address.tree / 0x100) % 0x100000000).try_into().unwrap();
+    let a2: u32 = ((address.tree % 0x100) * 0x1000000 + address_type * 0x10000 + key_pair / 0x10000)
+        .try_into()
+        .unwrap();
+    let a3: u32 = ((key_pair % 0x10000) * 0x10000 + chain_or_height / 0x10000).try_into().unwrap();
+    let a4: u32 = ((chain_or_height % 0x10000) * 0x10000 + hash_or_index / 0x10000)
+        .try_into()
+        .unwrap();
+    let carry: u32 = (hash_or_index % 0x10000).try_into().unwrap();
+    (array![s0, s1, s2, s3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, a0, a1, a2, a3, a4], carry)
 }
 
-fn f_hash(pk_seed: u128, address: Address, value: u128) -> u128 {
-    let mut data = hash_prefix(pk_seed, address);
-    data.append_word(value.into(), N);
-    digest_node(compute_sha256_byte_array(@data))
+fn f_hash(pk_seed: [u32; 4], address: Address, value: u128) -> u128 {
+    let (mut input, mut carry) = hash_prefix(pk_seed, address);
+    append_shifted_u128(ref input, ref carry, value);
+    digest_node(compute_sha256_u32_array(input, carry, 2))
 }
 
-fn h_hash(pk_seed: u128, address: Address, left: u128, right: u128) -> u128 {
-    let mut data = hash_prefix(pk_seed, address);
-    data.append_word(left.into(), N);
-    data.append_word(right.into(), N);
-    digest_node(compute_sha256_byte_array(@data))
+fn h_hash(pk_seed: [u32; 4], address: Address, left: u128, right: u128) -> u128 {
+    let (mut input, mut carry) = hash_prefix(pk_seed, address);
+    append_shifted_u128(ref input, ref carry, left);
+    append_shifted_u128(ref input, ref carry, right);
+    digest_node(compute_sha256_u32_array(input, carry, 2))
 }
 
-fn t_hash(pk_seed: u128, address: Address, mut values: Span<u128>) -> u128 {
-    let mut data = hash_prefix(pk_seed, address);
+fn t_hash(pk_seed: [u32; 4], address: Address, mut values: Span<u128>) -> u128 {
+    let (mut input, mut carry) = hash_prefix(pk_seed, address);
     while let Some(value) = values.pop_front() {
-        data.append_word((*value).into(), N);
+        append_shifted_u128(ref input, ref carry, *value);
     }
-    digest_node(compute_sha256_byte_array(@data))
+    digest_node(compute_sha256_u32_array(input, carry, 2))
 }
 
-fn h_msg(message_hash: felt252, randomizer: u128, pk_seed: u128, pk_root: u128) -> Array<u8> {
+fn h_msg(message_hash: felt252, randomizer: u128, pk_seed: [u32; 4], pk_root: u128) -> Array<u8> {
     // Algorithm 24 with an empty context: M' = 0x00 || 0x00 || M.
     let message: u256 = message_hash.into();
-    let mut inner_input: ByteArray = "";
-    inner_input.append_word(randomizer.into(), N);
-    inner_input.append_word(pk_seed.into(), N);
-    inner_input.append_word(pk_root.into(), N);
-    inner_input.append_word(0, 1);
-    inner_input.append_word(0, 1);
-    inner_input.append_word(message.high.into(), N);
-    inner_input.append_word(message.low.into(), N);
-    let inner = compute_sha256_byte_array(@inner_input);
+    let [s0, s1, s2, s3] = pk_seed;
+    let mut inner_input = array![];
+    append_aligned_u128(ref inner_input, randomizer);
+    inner_input.append(s0);
+    inner_input.append(s1);
+    inner_input.append(s2);
+    inner_input.append(s3);
+    append_aligned_u128(ref inner_input, pk_root);
+    let mut carry = 0;
+    append_shifted_u128(ref inner_input, ref carry, message.high);
+    append_shifted_u128(ref inner_input, ref carry, message.low);
+    let inner = compute_sha256_u32_array(inner_input, carry, 2);
 
     // MGF1-SHA-256 needs one block for the 30-byte digest.
-    let mut mgf_input: ByteArray = "";
-    mgf_input.append_word(randomizer.into(), N);
-    mgf_input.append_word(pk_seed.into(), N);
-    append_digest(ref mgf_input, inner);
-    mgf_input.append_word(0, 4);
-    digest_bytes_30(compute_sha256_byte_array(@mgf_input))
+    let mut mgf_input = array![];
+    append_aligned_u128(ref mgf_input, randomizer);
+    mgf_input.append(s0);
+    mgf_input.append(s1);
+    mgf_input.append(s2);
+    mgf_input.append(s3);
+    let [d0, d1, d2, d3, d4, d5, d6, d7] = inner;
+    mgf_input.append(d0);
+    mgf_input.append(d1);
+    mgf_input.append(d2);
+    mgf_input.append(d3);
+    mgf_input.append(d4);
+    mgf_input.append(d5);
+    mgf_input.append(d6);
+    mgf_input.append(d7);
+    mgf_input.append(0);
+    digest_bytes_30(compute_sha256_u32_array(mgf_input, 0, 0))
 }
 
 fn fors_indices(md: Span<u8>) -> Array<u32> {
@@ -205,7 +240,7 @@ fn wots_digits(message: u128) -> Array<u32> {
 }
 
 fn wots_pk_from_sig(
-    signature: Span<u128>, message: u128, pk_seed: u128, mut address: Address,
+    signature: Span<u128>, message: u128, pk_seed: [u32; 4], mut address: Address,
 ) -> u128 {
     let digits = wots_digits(message);
     let mut endpoints = array![];
@@ -231,7 +266,7 @@ fn wots_pk_from_sig(
 }
 
 fn xmss_pk_from_sig(
-    leaf_index: u32, signature: Span<u128>, message: u128, pk_seed: u128, mut address: Address,
+    leaf_index: u32, signature: Span<u128>, message: u128, pk_seed: [u32; 4], mut address: Address,
 ) -> u128 {
     set_type_and_clear(ref address, WOTS_HASH);
     address.key_pair = leaf_index;
@@ -258,7 +293,7 @@ fn xmss_pk_from_sig(
 }
 
 fn fors_pk_from_sig(
-    signature: Span<u128>, md: Span<u8>, pk_seed: u128, mut address: Address,
+    signature: Span<u128>, md: Span<u8>, pk_seed: [u32; 4], mut address: Address,
 ) -> u128 {
     let indices = fors_indices(md);
     let key_pair = address.key_pair;
@@ -310,7 +345,11 @@ fn read_be_u32(mut bytes: Span<u8>) -> u32 {
 }
 
 fn hypertree_root(
-    signature: Span<u128>, message: u128, pk_seed: u128, mut tree_index: u64, mut leaf_index: u32,
+    signature: Span<u128>,
+    message: u128,
+    pk_seed: [u32; 4],
+    mut tree_index: u64,
+    mut leaf_index: u32,
 ) -> u128 {
     let mut address = zero_address();
     address.tree = tree_index;
@@ -372,6 +411,7 @@ pub impl SlhDsaSha2_128sVerifier of PqSignatureVerifier {
             Some(value) => value,
             None => { return false; },
         };
+        let pk_seed = split_u128(pk_seed);
 
         let digest = h_msg(message_hash, *signature.at(0), pk_seed, pk_root);
         let tree_index = read_be_u64(digest.span().slice(21, 7)) & TREE_MASK;

@@ -36,7 +36,7 @@ code { background: #f0f0f0; padding: 1px 5px; border-radius: 4px; font-size: 13p
 </style>
 <div class="wrap">
 <h1>Post-quantum signature verifiers &mdash; Starknet benchmark</h1>
-<p class="sub">Generated 2026-07-31 11:22 &middot; scarb 2.18.0, snforge 0.59.0 &middot; cost of verifying one signature inside an account validation.</p>
+<p class="sub">Generated 2026-07-31 11:43 &middot; scarb 2.18.0, snforge 0.59.0 &middot; cost of verifying one signature inside an account validation.</p>
 <div class="cards">
 <div class="card"><div class="l">Measured</div><div class="v">7</div></div>
 <div class="card"><div class="l">Pending</div><div class="v">2</div></div>
@@ -51,24 +51,24 @@ code { background: #f0f0f0; padding: 1px 5px; border-radius: 4px; font-size: 13p
 <tr><td data-v="Falcon-512 SHAKE-256 (standard)">Falcon-512 SHAKE-256 (standard)</td><td data-v="lattice (NTRU)">lattice (NTRU)</td><td class="mono" data-v="50163668">50,163,668</td><td class="mono" data-v="50.1637">50.1637%</td><td class="mono" data-v="312892">312,892</td><td class="mono" data-v="31.2892">31.2892%</td><td class="mono" data-v="60">60</td><td class="mono" data-v="29">29</td><td class="mono" data-v="455680">455,680</td><td data-v="True"><span class="badge ok">yes</span></td></tr>
 <tr><td data-v="Falcon-512 SHAKE-256 direct (standard, no hint)">Falcon-512 SHAKE-256 direct (standard, no hint)</td><td data-v="lattice (NTRU)">lattice (NTRU)</td><td class="mono" data-v="60359788">60,359,788</td><td class="mono" data-v="60.3598">60.3598%</td><td class="mono" data-v="413819">413,819</td><td class="mono" data-v="41.3819">41.3819%</td><td class="mono" data-v="31">31</td><td class="mono" data-v="29">29</td><td class="mono" data-v="307200">307,200</td><td data-v="True"><span class="badge ok">yes</span></td></tr>
 <tr><td data-v="Falcon-512 Poseidon (native)">Falcon-512 Poseidon (native)</td><td data-v="lattice (NTRU)">lattice (NTRU)</td><td class="mono" data-v="12045449">12,045,449</td><td class="mono" data-v="12.0454">12.0454%</td><td class="mono" data-v="97681">97,681</td><td class="mono" data-v="9.7681">9.7681%</td><td class="mono" data-v="60">60</td><td class="mono" data-v="29">29</td><td class="mono" data-v="455680">455,680</td><td data-v="True"><span class="badge ok">yes</span></td></tr>
-<tr><td data-v="SLH-DSA-SHA2-128s">SLH-DSA-SHA2-128s</td><td data-v="hash-based (stateless)">hash-based (stateless)</td><td class="mono" data-v="6103493166">6,103,493,166</td><td class="mono" data-v="6103.4932">6103.4932%</td><td class="mono" data-v="27514677">27,514,677</td><td class="mono" data-v="2751.4677">2751.4677%</td><td class="mono" data-v="491">491</td><td class="mono" data-v="2">2</td><td class="mono" data-v="2524160">2,524,160</td><td data-v="False"><span class="badge no">no</span></td></tr>
+<tr><td data-v="SLH-DSA-SHA2-128s">SLH-DSA-SHA2-128s</td><td data-v="hash-based (stateless)">hash-based (stateless)</td><td class="mono" data-v="3627901336">3,627,901,336</td><td class="mono" data-v="3627.9013">3627.9013%</td><td class="mono" data-v="9035854">9,035,854</td><td class="mono" data-v="903.5854">903.5854%</td><td class="mono" data-v="491">491</td><td class="mono" data-v="2">2</td><td class="mono" data-v="2524160">2,524,160</td><td data-v="False"><span class="badge no">no</span></td></tr>
 </tbody></table>
 <h2>Verification L2 gas (relative)</h2>
 <div class="barrow"><div class="barlabel">ECDSA-STARK (baseline)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">30,855  (0.0309% cap)</div></div>
 <div class="barrow"><div class="barlabel">Falcon-512 (FN-DSA)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">12,809,640  (12.8096% cap)</div></div>
 <div class="barrow"><div class="barlabel">Falcon-512 direct (no hint)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">23,005,760  (23.0058% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 (standard)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">50,163,668  (50.1637% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 direct (standard, no hint)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">60,359,788  (60.3598% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 (standard)</div><div class="track"><div class="fill" style="width:1.38%;background:#185FA5"></div></div><div class="barval mono">50,163,668  (50.1637% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 direct (standard, no hint)</div><div class="track"><div class="fill" style="width:1.66%;background:#185FA5"></div></div><div class="barval mono">60,359,788  (60.3598% cap)</div></div>
 <div class="barrow"><div class="barlabel">Falcon-512 Poseidon (native)</div><div class="track"><div class="fill" style="width:1.0%;background:#185FA5"></div></div><div class="barval mono">12,045,449  (12.0454% cap)</div></div>
-<div class="barrow"><div class="barlabel">SLH-DSA-SHA2-128s</div><div class="track"><div class="fill" style="width:100.0%;background:#185FA5"></div></div><div class="barval mono">6,103,493,166  (6103.4932% cap)</div></div>
+<div class="barrow"><div class="barlabel">SLH-DSA-SHA2-128s</div><div class="track"><div class="fill" style="width:100.0%;background:#185FA5"></div></div><div class="barval mono">3,627,901,336  (3627.9013% cap)</div></div>
 <h2>Verification steps (relative)</h2>
 <div class="barrow"><div class="barlabel">ECDSA-STARK (baseline)</div><div class="track"><div class="fill" style="width:1.0%;background:#0F6E56"></div></div><div class="barval mono">152  (0.0152% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 (FN-DSA)</div><div class="track"><div class="fill" style="width:1.0%;background:#0F6E56"></div></div><div class="barval mono">104,854  (10.4854% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 direct (no hint)</div><div class="track"><div class="fill" style="width:1.0%;background:#0F6E56"></div></div><div class="barval mono">205,781  (20.5781% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 (standard)</div><div class="track"><div class="fill" style="width:1.14%;background:#0F6E56"></div></div><div class="barval mono">312,892  (31.2892% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 direct (standard, no hint)</div><div class="track"><div class="fill" style="width:1.5%;background:#0F6E56"></div></div><div class="barval mono">413,819  (41.3819% cap)</div></div>
-<div class="barrow"><div class="barlabel">Falcon-512 Poseidon (native)</div><div class="track"><div class="fill" style="width:1.0%;background:#0F6E56"></div></div><div class="barval mono">97,681  (9.7681% cap)</div></div>
-<div class="barrow"><div class="barlabel">SLH-DSA-SHA2-128s</div><div class="track"><div class="fill" style="width:100.0%;background:#0F6E56"></div></div><div class="barval mono">27,514,677  (2751.4677% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 (FN-DSA)</div><div class="track"><div class="fill" style="width:1.16%;background:#0F6E56"></div></div><div class="barval mono">104,854  (10.4854% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 direct (no hint)</div><div class="track"><div class="fill" style="width:2.28%;background:#0F6E56"></div></div><div class="barval mono">205,781  (20.5781% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 (standard)</div><div class="track"><div class="fill" style="width:3.46%;background:#0F6E56"></div></div><div class="barval mono">312,892  (31.2892% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 SHAKE-256 direct (standard, no hint)</div><div class="track"><div class="fill" style="width:4.58%;background:#0F6E56"></div></div><div class="barval mono">413,819  (41.3819% cap)</div></div>
+<div class="barrow"><div class="barlabel">Falcon-512 Poseidon (native)</div><div class="track"><div class="fill" style="width:1.08%;background:#0F6E56"></div></div><div class="barval mono">97,681  (9.7681% cap)</div></div>
+<div class="barrow"><div class="barlabel">SLH-DSA-SHA2-128s</div><div class="track"><div class="fill" style="width:100.0%;background:#0F6E56"></div></div><div class="barval mono">9,035,854  (903.5854% cap)</div></div>
 <h2>Where the cost goes</h2>
 <p class="note"><b>ECDSA-STARK (baseline)</b> &mdash; builtins: ec_op: 3, range_check: 7</p>
 <details><summary>step attribution (top functions inside verify)</summary><table><thead><tr><th>Function</th><th>Steps (flat)</th><th>% of test</th></tr></thead><tbody>
@@ -130,7 +130,7 @@ code { background: #f0f0f0; padding: 1px 5px; border-radius: 4px; font-size: 13p
 <tr><td style="text-align:left" class="mono">pqbench_falcon_512::packing::unpack_512_u16</td><td class="mono">363</td><td class="mono">0.37%</td></tr>
 <tr><td style="text-align:left" class="mono">pqbench_falcon_512::fixtures::poseidon::signature</td><td class="mono">124</td><td class="mono">0.13%</td></tr>
 </tbody></table></details>
-<p class="note"><b>SLH-DSA-SHA2-128s</b> &mdash; builtins: bitwise: 4589342, range_check: 2832272</p>
+<p class="note"><b>SLH-DSA-SHA2-128s</b> &mdash; builtins: bitwise: 4589342, range_check: 550107</p>
 <h2>Realistic cost in __validate__ (deploy + call, baseline-subtracted)</h2>
 <p class="note">Adds call dispatch, tx-info read (signature deserialization) and storage read on top of bare verification &mdash; the cost an account actually pays during validation.</p>
 <table><thead><tr><th>Scheme</th><th>__validate__ L2 gas</th><th>% gas cap</th><th>Steps</th><th>% step cap</th><th>Bare verify L2 gas</th><th>Class (bytes)</th><th>Fits caps</th></tr></thead><tbody>
@@ -140,7 +140,7 @@ code { background: #f0f0f0; padding: 1px 5px; border-radius: 4px; font-size: 13p
 <tr><td>Falcon-512 SHAKE-256 (standard)</td><td class="mono">51,733,728</td><td class="mono">51.7337%</td><td class="mono">327,157</td><td class="mono">32.7157%</td><td class="mono">50,163,668</td><td class="mono">1,966,366</td><td><span class="badge ok">yes</span></td></tr>
 <tr><td>Falcon-512 SHAKE-256 direct (standard, no hint)</td><td class="mono">61,878,938</td><td class="mono">61.8789%</td><td class="mono">427,598</td><td class="mono">42.7598%</td><td class="mono">60,359,788</td><td class="mono">1,839,913</td><td><span class="badge ok">yes</span></td></tr>
 <tr><td>Falcon-512 Poseidon (native)</td><td class="mono">13,615,909</td><td class="mono">13.6159%</td><td class="mono">111,950</td><td class="mono">11.195%</td><td class="mono">12,045,449</td><td class="mono">1,830,967</td><td><span class="badge ok">yes</span></td></tr>
-<tr><td>SLH-DSA-SHA2-128s</td><td class="mono">6,103,628,696</td><td class="mono">6103.6287%</td><td class="mono">27,515,917</td><td class="mono">2751.5917%</td><td class="mono">6,103,493,166</td><td class="mono">262,335</td><td><span class="badge no">no</span></td></tr>
+<tr><td>SLH-DSA-SHA2-128s</td><td class="mono">3,628,036,866</td><td class="mono">3628.0369%</td><td class="mono">9,037,094</td><td class="mono">903.7094%</td><td class="mono">3,627,901,336</td><td class="mono">216,084</td><td><span class="badge no">no</span></td></tr>
 </tbody></table>
 <h2>On-chain footprint (signature + public key, felts)</h2>
 <div class="barrow"><div class="barlabel">ECDSA-STARK (baseline)</div><div class="track"><div class="fill" style="width:1.0%;background:#D85A30"></div></div><div class="barval mono">3 felts (2+1)</div></div>

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2026-07-31 11:22",
+    "generated": "2026-07-31 11:43",
     "toolchain": {
       "scarb": "2.18.0",
       "snforge": "0.59.0",
@@ -49,8 +49,8 @@
       "verify_l2_gas": 30855,
       "verify_steps": 152,
       "verify_builtins": {
-        "range_check": 7,
-        "ec_op": 3
+        "ec_op": 3,
+        "range_check": 7
       },
       "calldata_l2_gas": 15360,
       "pct_of_gas_cap": 0.0309,
@@ -781,8 +781,8 @@
       "verify_l2_gas": 12045449,
       "verify_steps": 97681,
       "verify_builtins": {
-        "range_check": 18581,
-        "poseidon": 19
+        "poseidon": 19,
+        "range_check": 18581
       },
       "calldata_l2_gas": 455680,
       "pct_of_gas_cap": 12.0454,
@@ -925,24 +925,24 @@
       "implemented": true,
       "notes": "The smallest-signature category-1 SLH-DSA parameter set. A pure FIPS 205 signature with empty context is verified over the 32-byte big-endian transaction hash. Each 16-byte scheme element occupies one felt, preserving the native signature structure and enforcing canonical inputs.",
       "measured": true,
-      "verify_l2_gas": 6103493166,
-      "verify_steps": 27514677,
+      "verify_l2_gas": 3627901336,
+      "verify_steps": 9035854,
       "verify_builtins": {
-        "range_check": 2832272,
+        "range_check": 550107,
         "bitwise": 4589342
       },
       "calldata_l2_gas": 2524160,
-      "pct_of_gas_cap": 6103.4932,
-      "pct_of_step_cap": 2751.4677,
+      "pct_of_gas_cap": 3627.9013,
+      "pct_of_step_cap": 903.5854,
       "fits_gas_cap": false,
       "fits_step_cap": false,
-      "validate_l2_gas": 6103628696,
-      "validate_steps": 27515917,
-      "validate_pct_of_gas_cap": 6103.6287,
-      "validate_pct_of_step_cap": 2751.5917,
+      "validate_l2_gas": 3628036866,
+      "validate_steps": 9037094,
+      "validate_pct_of_gas_cap": 3628.0369,
+      "validate_pct_of_step_cap": 903.7094,
       "validate_fits": false,
-      "class_felts": 11226,
-      "class_bytes": 262335
+      "class_felts": 9559,
+      "class_bytes": 216084
     },
     {
       "key": "poseidon_wots",

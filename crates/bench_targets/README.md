@@ -30,7 +30,7 @@ src/
 One row per verifier account. The 100M-L2-gas / 1M-step validation cap is the deployability
 threshold. Every Falcon account fits it. The standardized SLH-DSA account does not:
 reconstructing its FORS and XMSS trees requires 4,116 native SHA-256 block-processing
-syscalls and exceeds the limits by 61.0× in gas and 27.5× in steps.
+syscalls and exceeds the limits by 36.3× in gas and 9.04× in steps.
 
 | Account | Measurement | L2 gas | Steps |
 |---|---|--:|--:|
@@ -40,4 +40,4 @@ syscalls and exceeds the limits by 61.0× in gas and 27.5× in steps.
 | `Falcon512PoseidonAccount` (Poseidon) | inside `__validate__` | 13,615,909 | 111,950 |
 | `Falcon512ShakeAccount` (SHAKE-256) | inside `__validate__` | 51,733,728 | 327,157 |
 | `Falcon512ShakeDirectAccount` (SHAKE-256 direct) | inside `__validate__` | 61,878,938 | 427,598 |
-| `SlhDsaSha2_128sAccount` (FIPS 205) | inside `__validate__` | 6,103,628,696 | 27,515,917 |
+| `SlhDsaSha2_128sAccount` (FIPS 205) | inside `__validate__` | 3,628,036,866 | 9,037,094 |

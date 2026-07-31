@@ -128,15 +128,15 @@
       "package": "pqbench_slh_dsa_sha2_128s",
       "test": "bench_verify_slh_dsa_sha2_128s",
       "baseline": "bench_baseline_slh_dsa_sha2_128s",
-      "l2_gas": 6103493166,
-      "steps": 27514677
+      "l2_gas": 3627901336,
+      "steps": 9035854
     },
     "slh_dsa_sha2_128s_validate": {
       "package": "pqbench_targets",
       "test": "bench_validate_slh_dsa_sha2_128s",
       "baseline": "bench_validate_base_slh_dsa_sha2_128s",
-      "l2_gas": 6103628696,
-      "steps": 27515917
+      "l2_gas": 3628036866,
+      "steps": 9037094
     }
   }
 }
