@@ -46,12 +46,14 @@ Current efficiency of every measured entry, per crate (the values pinned in
 | [`falcon_512`](crates/falcon_512) | verify, Poseidon variant (native) | 12,045,449 | 97,681 | 12.0% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 variant (standard) | 50,163,668 | 312,892 | 50.2% |
 | [`falcon_512`](crates/falcon_512) | verify, SHAKE-256 direct variant (standard) | 60,359,788 | 413,819 | 60.4% |
+| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | verify, FIPS 205 | 6,103,493,166 | 27,514,677 | 6,103.5% |
 | [`bench_targets`](crates/bench_targets) | ECDSA-STARK account, inside `__validate__` | 160,795 | 1,437 | 0.16% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 hint account, inside `__validate__` | 14,380,100 | 119,124 | 14.4% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 direct account, inside `__validate__` | 24,525,310 | 219,565 | 24.5% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 Poseidon account, inside `__validate__` | 13,615,909 | 111,950 | 13.6% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 account, inside `__validate__` | 51,733,728 | 327,157 | 51.7% |
 | [`bench_targets`](crates/bench_targets) | Falcon-512 SHAKE-256 direct account, inside `__validate__` | 61,878,938 | 427,598 | 61.9% |
+| [`bench_targets`](crates/bench_targets) | SLH-DSA-SHA2-128s account, inside `__validate__` | 6,103,628,696 | 27,515,917 | 6,103.6% |
 | [`ntt`](crates/ntt) | forward 512-point transform | 8,895,740 | 81,826 | 8.9% |
 | [`ntt`](crates/ntt) | forward transform, unreduced output | 7,832,270 | 73,587 | 7.8% |
 | [`ntt`](crates/ntt) | generated Falcon-512 transform, felt input | 2,137,010 | 15,635 | 2.1% |
@@ -90,6 +92,15 @@ All five use genuine falcon.py-signed fixtures and fit the validation caps — t
 variants with wide margin, and the SHAKE-256 accounts at 51.7–61.9% of the gas cap and
 32.7–42.8% of the step cap.
 
+[`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) measures the standardized,
+stateless hash-based alternative at the same NIST category. Its smallest FIPS 205
+signature is 7,856 bytes, encoded as 491 16-byte felts, and its public key is 32 bytes.
+The verifier uses Starknet's native SHA-256 block syscall and accepts a genuine
+interoperable signature, but the 4,116 compression calls needed to reconstruct FORS and
+the seven-layer hypertree cost 6.10 billion L2 gas and 27.5 million steps. Its account
+therefore exceeds the validation caps by 61.0× and 27.5×, respectively, so this standard
+parameter set is not deployable inside `__validate__` on the measured protocol limits.
+
 All five derive the message point on-chain from `message_hash`, which binds the signature to
 the message. At s2morrow commit `4eff9ab`, its packed Poseidon verifier measures 81,212 steps
 with Scarb 2.15.1 and Starknet Foundry 0.55.0, versus 97,681 here with Scarb 2.18.0 and
@@ -100,8 +111,8 @@ rejection stream. The NTT and packing costs here are already comparable to or be
 s2morrow's; the remaining gap is concentrated in hash-to-point and the fused verification
 core. Each variant also has an account contract measured inside `__validate__`, where the
 realistic cost sits just above bare verify (the verifier dominates; dispatch, the 29-slot key
-read, and deserialization are small). The remaining PQ verifiers are stubs behind the same
-interface.
+read, and deserialization are small). ML-DSA-44 and Poseidon-WOTS+ remain stubs behind the
+same interface.
 
 ## Try the accounts
 
@@ -146,6 +157,7 @@ and improvements are committed via `make ratchet`.
 |---|---|---|---|
 | [`ecdsa_stark`](crates/ecdsa_stark) | ECDSA-STARK | classical EC (control) | none |
 | [`falcon_512`](crates/falcon_512) | Falcon-512 (FN-DSA); BLAKE2s hint+direct, SHAKE-256 hint+direct, Poseidon variants | lattice (NTRU) | draft, FIPS 206 (standard SHAKE-256; non-standard BLAKE2s / Poseidon) |
+| [`slh_dsa_sha2_128s`](crates/slh_dsa_sha2_128s) | SLH-DSA-SHA2-128s | hash-based (stateless) | final, FIPS 205 |
 | [`ml_dsa_44`](crates/ml_dsa_44) | ML-DSA-44 (Dilithium) | lattice (module) | final, FIPS 204 |
 | [`poseidon_wots`](crates/poseidon_wots) | Poseidon-WOTS+ | hashing | not standardized |
 
@@ -167,6 +179,7 @@ crates/
   bench_interface/   # the common PqSignatureVerifier interface plus cap constants
   ecdsa_stark/       # one crate per scheme (see each crate's README)
   falcon_512/
+  slh_dsa_sha2_128s/
   ml_dsa_44/
   poseidon_wots/
   ntt/               # generic NTT engine + generated Falcon-512 forward path

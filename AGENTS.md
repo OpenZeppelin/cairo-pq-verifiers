@@ -70,7 +70,7 @@ A change is complete only when everything it invalidates is regenerated in the s
 | Any measured Cairo code | `make all` (regenerates `results/`), `make check-eff`, and `make ratchet` if numbers improved |
 | Any number in `efficiency_baseline.json` | the efficiency tables in the main README and in the owning crate's README |
 | A verifier's cost or status | the README snapshot table |
-| A scheme's encoding (felt layout, sizes) | `schemes.json` sizes, the crate README, `scripts/gen_falcon_fixture.py` (and regenerate the fixture) |
+| A scheme's encoding (felt layout, sizes) | `schemes.json` sizes, the crate README, the owning fixture generator (`scripts/gen_falcon_fixture.py` or `scripts/gen_slh_dsa_fixture.py`), and regenerate the fixture |
 | The public surface of a measured crate | its benchmark pairs and `efficiency_baseline.json` entries (see below) |
 | NTT tables or the engine's arithmetic | `scripts/gen_ntt_tables.py` (model first, then `--emit`), `scripts/verify_ntt_constants.py` must still pass |
 | The toolchain (`.tool-versions`) | the README Run section, the `toolchain` field of `efficiency_baseline.json`, and a fresh `make all` |
@@ -81,7 +81,8 @@ A change is complete only when everything it invalidates is regenerated in the s
 Generated files are never hand-edited: `results/*`, `crates/ntt/src/roots_scaled.cairo`,
 `crates/ntt/src/roots_felt.cairo`, `crates/ntt/src/bitrev.cairo`,
 `crates/falcon_512/src/fixtures/blake.cairo`, `crates/falcon_512/src/fixtures/shake.cairo`,
-`crates/falcon_512/src/fixtures/poseidon.cairo`. Regenerate via the owning script.
+`crates/falcon_512/src/fixtures/poseidon.cairo`,
+`crates/slh_dsa_sha2_128s/src/fixtures.cairo`. Regenerate via the owning script.
 
 ## Performance: every public API is regression-checked
 

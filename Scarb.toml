@@ -5,6 +5,7 @@ members = [
     "crates/falcon_512",
     "crates/ml_dsa_44",
     "crates/poseidon_wots",
+    "crates/slh_dsa_sha2_128s",
     "crates/bench_targets",
     "crates/ntt",
     "pq-accounts/contracts",

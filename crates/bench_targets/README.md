@@ -2,8 +2,8 @@
 
 **Component:** the account harness for the in-`__validate__` scenario: one deployable
 account contract per verifier.
-**Status:** measured (ECDSA-STARK and the five Falcon-512 variants); other PQ verifiers'
-accounts land as their schemes are implemented.
+**Status:** measured (ECDSA-STARK, the five Falcon-512 variants, and
+SLH-DSA-SHA2-128s); other PQ verifiers' accounts land as their schemes are implemented.
 
 Unlike the verifier crates (one scheme each), this crate collects **one account contract
 per verifier**, each in its own module. An account wraps its scheme the way a Starknet
@@ -22,15 +22,15 @@ src/
   falcon_512.cairo   # Falcon512Account (hint) + Falcon512DirectAccount (direct)
                      #   + Falcon512ShakeAccount (SHAKE-256) + Falcon512PoseidonAccount
                      #   + Falcon512ShakeDirectAccount (SHAKE-256 direct)
+  slh_dsa_sha2_128s.cairo  # SlhDsaSha2_128sAccount (FIPS 205)
 ```
 
 ## Current efficiency
 
 One row per verifier account. The 100M-L2-gas / 1M-step validation cap is the deployability
-threshold, and every account fits it: the BLAKE2s, direct, and Poseidon Falcon accounts with
-wide margin, and the two SHAKE-256 accounts (hint and direct) — whose pure-Cairo SHAKE-256
-hash-to-point dominates their cost — at 51.7–61.9% of the gas cap and 32.7–42.8% of the
-step cap.
+threshold. Every Falcon account fits it. The standardized SLH-DSA account does not:
+reconstructing its FORS and XMSS trees requires 4,116 native SHA-256 block-processing
+syscalls and exceeds the limits by 61.0× in gas and 27.5× in steps.
 
 | Account | Measurement | L2 gas | Steps |
 |---|---|--:|--:|
@@ -40,3 +40,4 @@ step cap.
 | `Falcon512PoseidonAccount` (Poseidon) | inside `__validate__` | 13,615,909 | 111,950 |
 | `Falcon512ShakeAccount` (SHAKE-256) | inside `__validate__` | 51,733,728 | 327,157 |
 | `Falcon512ShakeDirectAccount` (SHAKE-256 direct) | inside `__validate__` | 61,878,938 | 427,598 |
+| `SlhDsaSha2_128sAccount` (FIPS 205) | inside `__validate__` | 6,103,628,696 | 27,515,917 |

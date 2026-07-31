@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated": "2026-07-14 16:41",
+    "generated": "2026-07-31 11:22",
     "toolchain": {
       "scarb": "2.18.0",
       "snforge": "0.59.0",
@@ -49,8 +49,8 @@
       "verify_l2_gas": 30855,
       "verify_steps": 152,
       "verify_builtins": {
-        "ec_op": 3,
-        "range_check": 7
+        "range_check": 7,
+        "ec_op": 3
       },
       "calldata_l2_gas": 15360,
       "pct_of_gas_cap": 0.0309,
@@ -449,8 +449,8 @@
       "verify_l2_gas": 50163668,
       "verify_steps": 312892,
       "verify_builtins": {
-        "bitwise": 21816,
-        "range_check": 65952
+        "range_check": 65952,
+        "bitwise": 21816
       },
       "calldata_l2_gas": 455680,
       "pct_of_gas_cap": 50.1637,
@@ -591,8 +591,8 @@
       "verify_l2_gas": 60359788,
       "verify_steps": 413819,
       "verify_builtins": {
-        "bitwise": 21816,
-        "range_check": 72631
+        "range_check": 72631,
+        "bitwise": 21816
       },
       "calldata_l2_gas": 307200,
       "pct_of_gas_cap": 60.3598,
@@ -781,8 +781,8 @@
       "verify_l2_gas": 12045449,
       "verify_steps": 97681,
       "verify_builtins": {
-        "poseidon": 19,
-        "range_check": 18581
+        "range_check": 18581,
+        "poseidon": 19
       },
       "calldata_l2_gas": 455680,
       "pct_of_gas_cap": 12.0454,
@@ -905,6 +905,44 @@
       "implemented": false,
       "notes": "Finalized; robust signing. Expected SHAKE-dominated cost in Cairo.",
       "measured": false
+    },
+    {
+      "key": "slh_dsa_sha2_128s",
+      "label": "SLH-DSA-SHA2-128s",
+      "family": "hash-based (stateless)",
+      "package": "pqbench_slh_dsa_sha2_128s",
+      "verify_test": "bench_verify_slh_dsa_sha2_128s",
+      "baseline_test": "bench_baseline_slh_dsa_sha2_128s",
+      "validate_test": "bench_validate_slh_dsa_sha2_128s",
+      "validate_baseline_test": "bench_validate_base_slh_dsa_sha2_128s",
+      "contract": "SlhDsaSha2_128sAccount",
+      "nist_category": "1",
+      "standardized": "yes (FIPS 205)",
+      "on_chain_hash": "SHA-256 (native block-processing syscall)",
+      "offchain_prep": "none beyond signing",
+      "sig_felts": 491,
+      "pubkey_felts": 2,
+      "implemented": true,
+      "notes": "The smallest-signature category-1 SLH-DSA parameter set. A pure FIPS 205 signature with empty context is verified over the 32-byte big-endian transaction hash. Each 16-byte scheme element occupies one felt, preserving the native signature structure and enforcing canonical inputs.",
+      "measured": true,
+      "verify_l2_gas": 6103493166,
+      "verify_steps": 27514677,
+      "verify_builtins": {
+        "range_check": 2832272,
+        "bitwise": 4589342
+      },
+      "calldata_l2_gas": 2524160,
+      "pct_of_gas_cap": 6103.4932,
+      "pct_of_step_cap": 2751.4677,
+      "fits_gas_cap": false,
+      "fits_step_cap": false,
+      "validate_l2_gas": 6103628696,
+      "validate_steps": 27515917,
+      "validate_pct_of_gas_cap": 6103.6287,
+      "validate_pct_of_step_cap": 2751.5917,
+      "validate_fits": false,
+      "class_felts": 11226,
+      "class_bytes": 262335
     },
     {
       "key": "poseidon_wots",

@@ -1,6 +1,6 @@
 # PQ verifier benchmark summary
 
-_Generated 2026-07-14 16:41._
+_Generated 2026-07-31 11:22._
 
 | Scheme | L2 gas | % gas cap | Steps | % step cap | Sig+PK felts | Fits caps |
 |---|--:|--:|--:|--:|--:|:--:|
@@ -10,6 +10,7 @@ _Generated 2026-07-14 16:41._
 | Falcon-512 SHAKE-256 (standard) | 50,163,668 | 50.1637% | 312,892 | 31.2892% | 89 | yes |
 | Falcon-512 SHAKE-256 direct (standard, no hint) | 60,359,788 | 60.3598% | 413,819 | 41.3819% | 60 | yes |
 | Falcon-512 Poseidon (native) | 12,045,449 | 12.0454% | 97,681 | 9.7681% | 89 | yes |
+| SLH-DSA-SHA2-128s | 6,103,493,166 | 6103.4932% | 27,514,677 | 2751.4677% | 493 | no |
 
 ## Pending implementation
 
